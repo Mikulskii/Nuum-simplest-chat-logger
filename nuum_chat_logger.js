@@ -81,7 +81,7 @@ msg_id = data.result[0]?.id;
 return  console.log(error);
 });
 }
-nuum()
+nuum();
 //Интервал запросов в мс
 setInterval(nuum, 10000);
 });
