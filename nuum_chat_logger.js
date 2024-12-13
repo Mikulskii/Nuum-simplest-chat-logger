@@ -2,7 +2,10 @@
 //https://nuum.ru/channel/<идентификатор>
 const channel = '';
 
-console.log("NUUM чат-логгер стартовал.."); 
+//Переменная для хранения id-сообщений
+let msg_id = null;
+
+console.log("NUUM чат-логгер стартовал..");
 
 //Получение Id-стрима
 function grab_id() {
@@ -59,30 +62,26 @@ return response.json();
 .then(data => {
 
 //Если приходит пустой результат опроса, отмена
-if (data?.result[0] === undefined) {return}
+  if (data?.result[0] === undefined) {return}
 
 //Назначение переменных на пришедший результат  
   const nickname = data.result[0]?.author.login;
   const msg = data.result[0]?.eventData.text;
   const prev_msg = data.result[1]?.eventData.text;
 
-//Временные отметки для дальнейшей фильтрации
-  var  unix = Date.now();
-  const time_posted = data.result[0]?.timestamp;
-
-//Фильтр сообщений по временным отметкам 
-  if (new Date(time_posted).getTime() < unix - 10150) {return}
-//Если пришедшее сообщение дублирует предыдущее, отмена
-  if (msg === prev_msg) {return}
+//Если id-сообщения повторяется, отмена
+if (msg_id === data.result[0]?.id) {return}
 
 //Вывод в лог сообщений "никнейм - текст сообщения"
-  console.log(`[NUUM | ${nickname}] ${msg}`);
+console.log(`[NUUM | ${nickname}] ${msg}`);
+//Сохраняем id-сообщения в переменную
+msg_id = data.result[0]?.id;
 })
 .catch((error) => {
 return  console.log(error);
 });
 }
-nuum();
+nuum()
 //Интервал запросов в мс
 setInterval(nuum, 10000);
 });
